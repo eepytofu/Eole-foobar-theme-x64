@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout xmlns="https://github.com/ESLyric/layout">
+  <panel name="Eole personal" layout="free">
+    <lyric name="lyrics" anchor="fill" hide-empty="1" fallback="" />
+    <label name="metadata" anchor="fill" text-align="center" text-valign="middle"
+      line-space="18" visibility="$ifequal(%esl_has_playing_lyric%,0,1,0)"
+      caption="Title : %title%$crlf()Artist : $if2(%artist%, Unknown Artist)$crlf()Album : $if2(%album%, Unknown Album)" />
+  </panel>
+</layout>

@@ -28,6 +28,8 @@ If you want the `Visualization` tab, install the [MilkDrop 2](https://www.foobar
 
 If you use Last.fm, install the [Enhanced Playback Statistics](https://www.foobar2000.org/components/view/foo_enhanced_playcount) component and set your username in its preferences, then pick `Skin settings` > `Play counts` > `Last.fm` from the `Foobar` button to show your scrobble counts instead of the local play counts.
 
+If you want my own setup (blurred cover art backgrounds, round covers, compact title bar, no ratings, no `Visualization` tab), copy the `eslyric-data` folder into your foobar profile directory too, and import `columnsUI_eole_x64_eepytofu.fcl` instead.
+
 If you want some extra polish you can change the systray icon: Click the `Foobar` button in the top left and navigate to `File` > `Preferences` > `Display` > `Columns UI`. Go to the `Notification area` tab and tick `Use custom icon`, then click `Select icon...` and select the file `[FOOBAR_PROFILE_DIRECTORY]\themes\eole\img\systray icons\white\uniEC4F.ico` (or any of the alternative icons in this folder).
 
 That's it! Enjoy your music!
