@@ -110,7 +110,7 @@ var properties = {
     TFgrouping_default: "%title% ^^ %album artist% ^^ %album%[' - Disc '%discnumber%]",
     TFsorting: window.GetProperty("MAINPANEL Library Sort TitleFormat", ""),
     TFsorting_default: window.GetProperty("MAINPANEL Library Default Sort TitleFormat", ""),
-    TFtitle: "%artist% ^^ [%discnumber%.] ^^ %tracknumber% ^^ %title% ^^ $if2(" + (globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + ",0) ^^ $if(%length%,%length_seconds%,'ON AIR') ^^ $if2(%play_counter%,$if2(%play_count%,0))",
+    TFtitle: "%artist% ^^ [%discnumber%.] ^^ %tracknumber% ^^ %title% ^^ $if2(" + (globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + ",0) ^^ $if(%length%,%length_seconds%,'ON AIR') ^^ $if2(%play_counter%,$if2(" + tf_play_count + ",0))",
     TFshowlist: "%album artist% ^^ %album% ^^ [' - Disc '%discnumber%] ^^ %date% ^^ %genre%",
 	TFshowlistReduced: "[%discnumber%]",
     TFgroupinfos: "%genre% ^^ %date%",
@@ -156,7 +156,7 @@ var TF = {
 	album: fb.TitleFormat("%album%"),
 	genre: fb.TitleFormat("%genre%"),
 	date: fb.TitleFormat("%date%"),
-	play_count: fb.TitleFormat("%play_count%"),
+	play_count: fb.TitleFormat(tf_play_count),
 	title: fb.TitleFormat(properties.TFtitle),
 	showlist: fb.TitleFormat(properties.TFshowlistReduced),
 	showlistReduced: fb.TitleFormat(properties.TFshowlistReduced),
@@ -6101,6 +6101,11 @@ function on_notify_data(name, info) {
 		case "setGlobalParameter":
 			setGlobalParameter(info[0],info[1]);
 		break;			
+		case "use_lastfm_play_count":
+			globalProperties.use_lastfm_play_count = info;
+			window.SetProperty("GLOBAL use Last.fm play counts", globalProperties.use_lastfm_play_count);
+			window.Reload();
+		break;
 		case "use_ratings_file_tags":
 			globalProperties.use_ratings_file_tags = info;
 			window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);

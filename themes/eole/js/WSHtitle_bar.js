@@ -1926,6 +1926,12 @@ function draw_main_menu(x,y){
 	ratingMenu.CheckMenuRadioItem(4047, 4048, checked_item);
 	ratingMenu.AppendTo(skin_settings_menu, MF_STRING, "Ratings");
 
+	var playCountMenu = window.CreatePopupMenu();
+	playCountMenu.AppendMenuItem(MF_STRING, 4049, "Playback Statistics");
+	playCountMenu.AppendMenuItem(foo_enhanced_playcount ? MF_STRING : MF_GRAYED, 4050, "Last.fm (Enhanced Playback Statistics)");
+	playCountMenu.CheckMenuRadioItem(4049, 4050, (globalProperties.use_lastfm_play_count && foo_enhanced_playcount) ? 4050 : 4049);
+	playCountMenu.AppendTo(skin_settings_menu, MF_STRING, "Play counts");
+
 	var schedulerMenu = window.CreatePopupMenu();
 	schedulerMenu.AppendMenuItem(MF_STRING, 3018, "Do nothing");
 	schedulerMenu.AppendMenuSeparator();
@@ -2236,6 +2242,11 @@ function draw_main_menu(x,y){
 		globalProperties.use_ratings_file_tags = false;
 		window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);
 		window.NotifyOthers("use_ratings_file_tags",globalProperties.use_ratings_file_tags);
+		break;
+	case (idx == 4049 || idx == 4050):
+		globalProperties.use_lastfm_play_count = (idx == 4050);
+		window.SetProperty("GLOBAL use Last.fm play counts", globalProperties.use_lastfm_play_count);
+		window.NotifyOthers("use_lastfm_play_count",globalProperties.use_lastfm_play_count);
 		break;
     case (idx == 4988):
 		if(properties.savedFilterState>=0 && !properties.displayToggleBtns) filters_panel_state.setValue(properties.savedFilterState);

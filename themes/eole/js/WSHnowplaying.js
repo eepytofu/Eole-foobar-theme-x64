@@ -99,7 +99,7 @@ g_tfo = {
 	artist: fb.TitleFormat("$if2(%artist%,)"),
 	album: fb.TitleFormat("$if(%album%,  |  %album%,)"),
 	bitrate: fb.TitleFormat("$if(%codec_profile%, | %codec_profile% | %bitrate%,  | %bitrate%)"),
-	defaultinfos: fb.TitleFormat((globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + " ^^ $if2(%title%,) ^^ $if2(%artist%,)$if(%album%,  |  %album%,)$if(%date%,' ('%date%')') ^^ %codec%$if(%codec_profile%, | %codec_profile%)$if(%bitrate%, | %bitrate%K) ^^ $if2(%play_count%,0)"),
+	defaultinfos: fb.TitleFormat((globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + " ^^ $if2(%title%,) ^^ $if2(%artist%,)$if(%album%,  |  %album%,)$if(%date%,' ('%date%')') ^^ %codec%$if(%codec_profile%, | %codec_profile%)$if(%bitrate%, | %bitrate%K) ^^ $if2(" + tf_play_count + ",0)"),
 }
 function setCustominfos(){
 	g_tfo.customInfos = fb.TitleFormat((globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + " ^^ $if2(%title%,) ^^ "+properties.customInfos);
@@ -1009,6 +1009,11 @@ function on_notify_data(name, info) {
 		case "setGlobalParameter":
 			setGlobalParameter(info[0],info[1]);
 		break;	
+		case "use_lastfm_play_count":
+			globalProperties.use_lastfm_play_count = info;
+			window.SetProperty("GLOBAL use Last.fm play counts", globalProperties.use_lastfm_play_count);
+			window.Reload();
+		break;
 		case "use_ratings_file_tags":
 			globalProperties.use_ratings_file_tags = info;
 			window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);

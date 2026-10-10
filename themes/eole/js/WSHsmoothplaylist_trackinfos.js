@@ -116,7 +116,7 @@ var properties_common = {
     tf_artist: fb.TitleFormat("%artist%"),
     tf_albumartist: fb.TitleFormat("%album artist%"),
     tf_groupkey: fb.TitleFormat("$if2(%album%$ifgreater(%totaldiscs%,1,[' - Disc '%discnumber%],),$if(%length%,'?',%path%)) ^^ $if2(%album artist%,$if(%length%,'Unknown artist(s)',%title%)) ^^ %discnumber% ## $if2(%artist%,$if(%length%,'Unknown artist',%path%)) ^^ %title% ^^ [%genre%] ^^ [%date%]"),
-    tf_track: fb.TitleFormat("%tracknumber% ^^ $if(%length%,%length%,ON AIR) ^^ $if2(" + (globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + ",0) ^^ %mood% ^^ %play_count% ^^ %bitrate% ^^ %codec%"),
+    tf_track: fb.TitleFormat("%tracknumber% ^^ $if(%length%,%length%,ON AIR) ^^ $if2(" + (globalProperties.use_ratings_file_tags ? "$meta(rating)" : "%rating%") + ",0) ^^ %mood% ^^ " + tf_play_count + " ^^ %bitrate% ^^ %codec%"),
     tf_path: fb.TitleFormat("$directory_path(%path%)\\"),
     tf_time_remaining: fb.TitleFormat("$if(%length%,-%playback_time_remaining%,'ON AIR')"),
     tf_elapsed_seconds: fb.TitleFormat("$if(%length%,%playback_time_seconds%,'ON AIR')"),
@@ -188,7 +188,7 @@ var TF = {
 	album: fb.TitleFormat("%album%"),
 	genre: fb.TitleFormat("%genre%"),
 	date: fb.TitleFormat("%date%"),
-	play_count: fb.TitleFormat("%play_count%"),
+	play_count: fb.TitleFormat(tf_play_count),
 	playback_time_seconds: fb.TitleFormat("%playback_time_seconds%"),
 	title: fb.TitleFormat("%title%"),
 	radio_artist:fb.TitleFormat("$if2(%artist%,$if(%bitrate%,%bitrate%K',''))"),
@@ -6530,6 +6530,11 @@ function on_notify_data(name, info) {
 		case "setGlobalParameter":
 			setGlobalParameter(info[0],info[1]);
 		break;			
+        case "use_lastfm_play_count":
+            globalProperties.use_lastfm_play_count = info;
+            window.SetProperty("GLOBAL use Last.fm play counts", globalProperties.use_lastfm_play_count);
+            window.Reload();
+        break;
         case "use_ratings_file_tags":
             globalProperties.use_ratings_file_tags = info;
             window.SetProperty("GLOBAL use ratings in file tags", globalProperties.use_ratings_file_tags);

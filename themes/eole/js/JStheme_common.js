@@ -21,6 +21,7 @@ var randomBtnTimer = false;
 
 var last_mouse_move_notified = (new Date).getTime();
 var foo_playcount = utils.CheckComponent("foo_playcount", true);
+var foo_enhanced_playcount = utils.CheckComponent("foo_enhanced_playcount", true);
 var timers = []
 var globalProperties = {
 	theme_version: '1.2.3b24',
@@ -65,7 +66,9 @@ var globalProperties = {
     stream_img: gdi.Image(theme_img_path+"\\stream_icon.png"),
 	ResizeQLY: 0,
 	use_ratings_file_tags: window.GetProperty("GLOBAL use ratings in file tags", false),
+	use_lastfm_play_count: window.GetProperty("GLOBAL use Last.fm play counts", false),
 }
+var tf_play_count = (globalProperties.use_lastfm_play_count && foo_enhanced_playcount) ? "%lastfm_play_count%" : "%play_count%";
 var PlaylistExclude = Array(globalProperties.whole_library,globalProperties.filter_playlist);
 globalProperties.tf_crc = fb.TitleFormat(globalProperties.crc);
 globalProperties.tf_genre = fb.TitleFormat("%genre%");
