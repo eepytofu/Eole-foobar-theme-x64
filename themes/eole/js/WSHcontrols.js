@@ -30,6 +30,7 @@ var properties = {
     minimode_dark_theme: window.GetProperty("MINIMODE dark theme", false),
     bio_dark_theme: window.GetProperty("BIO dark theme", false),
     bio_stick_to_dark_theme: window.GetProperty("BIO stick to dark theme", false),
+    lyrics_dark_theme: window.GetProperty("LYRICS dark theme", false),
     visualization_dark_theme: window.GetProperty("VISUALIZATION dark theme", false),
 	playandrandom: window.GetProperty("GLOBAL play and random",false),
     cursor_style: window.GetProperty("_DISPLAY slider cursor style", 0),	//0 circle, 1 full disk, 2 full disk on hover
@@ -335,6 +336,9 @@ function get_colors(){
 			break;
 			case 3:
 				properties.darklayout = properties.visualization_dark_theme || (globalProperties.colorsMainPanel!=0 && globalProperties.colorsMainPanel!=1 && globalProperties.colorsMainPanel!=2);
+			break;
+			case 4:
+				properties.darklayout = properties.lyrics_dark_theme || (globalProperties.colorsMainPanel!=0 && globalProperties.colorsMainPanel!=1 && globalProperties.colorsMainPanel!=2);
 			break;
 		}
 	} else properties.darklayout = properties.minimode_dark_theme || (globalProperties.colorsMainPanel!=0 && globalProperties.colorsMainPanel!=1 && globalProperties.colorsMainPanel!=2);
@@ -861,6 +865,7 @@ function on_paint(gr) {
 		case (main_panel_state.isEqual(0) && properties.library_dark_theme && layout_state.isEqual(0) && properties.darklayout):
 		case (main_panel_state.isEqual(1) && properties.playlists_dark_theme && layout_state.isEqual(0) && properties.darklayout):
 		case (main_panel_state.isEqual(2) && (properties.bio_dark_theme || properties.bio_stick_to_dark_theme) && layout_state.isEqual(0) && properties.darklayout):
+		case (main_panel_state.isEqual(4) && layout_state.isEqual(0) && properties.darklayout):
 		case (main_panel_state.isEqual(3) && layout_state.isEqual(0) && properties.darklayout):
 			gr.FillSolidRect(0, 0, ww, 1,colors.line_top_light);
 		break;
@@ -870,6 +875,7 @@ function on_paint(gr) {
 		case (main_panel_state.isEqual(0) && !properties.library_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(1) && !properties.playlists_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(2) && !(properties.bio_dark_theme || properties.bio_stick_to_dark_theme) && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(4) && !properties.lyrics_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(3) && !properties.visualization_dark_theme && layout_state.isEqual(0)):
 			gr.FillSolidRect(0, 0, ww, 1, colors.line_top_dark);
 		break;
@@ -1817,6 +1823,9 @@ function on_notify_data(name, info) {
 		case "nowplayingbio_state":
 			nowplayingbio_state.value=info;
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 		break;
@@ -1831,6 +1840,12 @@ function on_notify_data(name, info) {
 		case "bio_dark_theme":
 			properties.bio_dark_theme = info;
 			window.SetProperty("BIO dark theme", properties.bio_dark_theme);
+			get_colors();
+			window.Repaint();
+		break;
+		case "lyrics_dark_theme":
+			properties.lyrics_dark_theme = info;
+			window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
 			get_colors();
 			window.Repaint();
 		break;
@@ -2099,6 +2114,7 @@ function draw_menu() {
 	library_menu = window.CreatePopupMenu();
 	playlists_menu = window.CreatePopupMenu();
 	bio_menu = window.CreatePopupMenu();
+	lyrics_menu = window.CreatePopupMenu();
 	visu_menu = window.CreatePopupMenu();
 
 	wallpaper_visibility = window.CreatePopupMenu();
@@ -2129,6 +2145,11 @@ function draw_menu() {
 		bio_menu.CheckMenuItem(4002, properties.bio_dark_theme);
 		wallpaper_visibility.AppendTo(bio_menu,MF_STRING, "Wallpapers visibility");
 		wallpaper_blur.AppendTo(bio_menu,MF_STRING, "Wallpapers blur");
+	} else if(main_panel_state.isEqual(4)){
+		basemenu.AppendMenuSeparator();
+		lyrics_menu.AppendTo(basemenu,MF_STRING, "Current panel settings");
+		lyrics_menu.AppendMenuItem(MF_STRING, 4004, "Enable Dark theme");
+		lyrics_menu.CheckMenuItem(4004, properties.lyrics_dark_theme);
 	} else if(main_panel_state.isEqual(3)){
 		basemenu.AppendMenuSeparator();
 		visu_menu.AppendTo(basemenu,MF_STRING, "Current panel settings");
@@ -2220,6 +2241,11 @@ function draw_menu() {
         window.NotifyOthers("bio_dark_theme",properties.bio_dark_theme);
 		window.SetProperty("BIO dark theme", properties.bio_dark_theme);
         window.Repaint();
+        break;
+   case (idx == 4004):
+		properties.lyrics_dark_theme=!properties.lyrics_dark_theme;
+        window.NotifyOthers("lyrics_dark_theme",properties.lyrics_dark_theme);
+		window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
         break;
    case (idx == 4003):
 		properties.visualization_dark_theme=!properties.visualization_dark_theme;

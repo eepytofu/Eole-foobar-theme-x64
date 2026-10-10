@@ -9,6 +9,7 @@ var properties = {
 	darklayout: window.GetProperty("_DISPLAY: Main layout:Dark", true),
     minimode_dark_theme: window.GetProperty("MINIMODE dark theme", true),
     library_dark_theme: window.GetProperty("LIBRARY dark theme", true),
+    lyrics_dark_theme: window.GetProperty("LYRICS dark theme", false),
     visualization_dark_theme: window.GetProperty("VISUALIZATION dark theme", true),
     playlists_dark_theme: window.GetProperty("PLAYLISTS dark theme", false),
     bio_dark_theme: window.GetProperty("BIO dark theme", true),
@@ -982,6 +983,9 @@ function setDarkLayout(){
 			case 3:
 				properties.darklayout = properties.visualization_dark_theme;
 			break;
+			case 4:
+				properties.darklayout = properties.lyrics_dark_theme;
+			break;
 		}
 	} else properties.darklayout = properties.minimode_dark_theme;
 }
@@ -1175,6 +1179,9 @@ function on_notify_data(name, info) {
 		case "nowplayingbio_state":
 			nowplayingbio_state.value=info;
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 		break;
@@ -1187,6 +1194,9 @@ function on_notify_data(name, info) {
 		case "trackinfosbio_state":
 			trackinfosbio_state.value=info;
 		break;
+		case "trackinfoslyrics_state":
+			trackinfoslyrics_state.value=info;
+		break;		
 		case "trackinfosvisu_state":
 			trackinfosvisu_state.value=info;
 		break;		
@@ -1199,6 +1209,12 @@ function on_notify_data(name, info) {
 		case "bio_stick_to_dark_theme":
 			properties.bio_stick_to_dark_theme = info;
 			window.SetProperty("BIO stick to dark theme", properties.bio_stick_to_dark_theme);
+			on_layout_change();
+			window.Repaint();
+		break;
+		case "lyrics_dark_theme":
+			properties.lyrics_dark_theme = info;
+			window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
 			on_layout_change();
 			window.Repaint();
 		break;

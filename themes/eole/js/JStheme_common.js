@@ -915,168 +915,41 @@ oTooltip = function (varName) {
 };
 
 
-//UI hacks ----------------------------------------------------------------
+// Window control is shared by all JSplitter panels.
 oUIHacks = function () {
-    this.activeXObject = new ActiveXObject("UIHacks");
-    this.EnableSizing = function (m) {
-        try {
-            if (this.activeXObject.FrameStyle === 3 && this.activeXObject.DisableSizing) {
-                this.activeXObject.DisableSizing = false;
-            }
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks EnableSizing", "Error");
-			console.log(e);
-		}
+    this.EnableSizing = function () {};
+    this.DisableSizing = function () {};
+    this.SetPseudoCaption = function (x, y, w, h) {
+        if (w <= 0 || h <= 0) fb.Window.ClearPseudoCaption();
+        else fb.Window.SetPseudoCaption(x, y, w, h, true);
     };
-    this.DisableSizing = function (m) {
-        try {
-            if (m && this.activeXObject.FrameStyle === 3 && !this.activeXObject.DisableSizing) {
-                this.activeXObject.DisableSizing = true;
-            }
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks DisableSizing", "Error");
-			console.log(e);
-		}
+    this.getFullscreenState = function () { return fb.Window.Fullscreen; };
+    this.setFullscreenState = function (value) { fb.Window.Fullscreen = value; };
+    this.toggleFullscreen = function () { fb.Window.Fullscreen = !fb.Window.Fullscreen; };
+    this.getMainWindowState = function () {
+        return fb.Window.IsMinimized ? WindowState.Minimized : fb.Window.IsMaximized ? WindowState.Maximized : WindowState.Normal;
     };
-	this.SetPseudoCaption = function (x, y, w, h) {
-        try {
-           return this.activeXObject.SetPseudoCaption(x, y, w, h);
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks SetPseudoCaption x:"+x+" y:"+y+" w:"+w+" h:"+h, "Error");
-			console.log(e);
-		}
-	}
-	this.getFullscreenState = function () {
-        try {
-           return this.activeXObject.FullScreen;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks getFullscreenState", "Error");
-			console.log(e);
-		}
-	}
-	this.setFullscreenState = function (new_state) {
-        try {
-           this.activeXObject.FullScreen = new_state;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setFullscreenState "+new_state, "Error");
-			console.log(e);
-		}
-	}
-	this.toggleFullscreen = function () {
-        try {
-           this.activeXObject.FullScreen = !this.getFullscreenState();
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks toggleFullscreen ", "Error");
-			console.log(e);
-		}
-	}
-	this.getMainWindowState = function () {
-        try {
-           return this.activeXObject.MainWindowState;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks getMainWindowState", "Error");
-			console.log(e);
-		}
-	}
-	this.setMainWindowState = function (new_state) {
-        try {
-           this.activeXObject.MainWindowState = new_state;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setMainWindowState "+new_state, "Error");
-			console.log(e);
-		}
-	}
-	this.enableMinSize = function () {
-        try {
-           this.activeXObject.MinSize.Enabled = true;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks enableMinSize", "Error");
-			console.log(e);
-		}
-	}
-	this.disableMinSize = function () {
-        try {
-           this.activeXObject.MinSize.Enabled = false;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks disableMinSize", "Error");
-			console.log(e);
-		}
-	}
-	this.setMinWidth = function (width) {
-        try {
-           this.activeXObject.MinSize.Width = width;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setMinWidth "+width, "Error");
-			console.log(e);
-		}
-	}
-	this.setMinHeight = function (height) {
-        try {
-           this.activeXObject.MinSize.Height = height;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setMinHeight "+height, "Error");
-			console.log(e);
-		}
-	}
-	this.enableMaxSize = function () {
-        try {
-           this.activeXObject.MaxSize.Enabled = true;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks enableMaxSize", "Error");
-			console.log(e);
-		}
-	}
-	this.disableMaxSize = function () {
-        try {
-           this.activeXObject.MaxSize.Enabled = false;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks disableMaxSize", "Error");
-			console.log(e);
-		}
-	}
-	this.setMaxWidth = function (width) {
-        try {
-           this.activeXObject.MaxSize.Width = width;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setMaxWidth "+width, "Error");
-			console.log(e);
-		}
-	}
-	this.setMaxHeight = function (height) {
-        try {
-           this.activeXObject.MaxSize.Height = height;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setMaxHeight "+height, "Error");
-			console.log(e);
-		}
-	}
-	this.setAero = function (top,right,bottom,left) {
-        try {
-			this.activeXObject.Aero.Left = left;
-			this.activeXObject.Aero.Top = top;
-			this.activeXObject.Aero.Right = right;
-			this.activeXObject.Aero.Bottom = bottom;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setAero left:"+left+" top:"+top+" right:"+right+" bottom:"+bottom, "Error");
-			console.log(e);
-		}
-	}
-	this.setAeroEffect = function (effect) {
-        try {
-           this.activeXObject.Aero.Effect = effect;
-        } catch (e) {
-			console.log(e);
-		}
-	}
-	this.setFrameStyle = function (style) {
-        try {
-           this.activeXObject.FrameStyle = style;
-        } catch (e) {
-			fb.ShowPopupMessage('Oupppppsssss, it look like an error\n\n'+"UIHacks setFrameStyle "+style, "Error");
-			console.log(e);
-		}
-	}
-}
+    this.setMainWindowState = function (value) {
+        if (value === WindowState.Minimized) fb.Window.Minimize();
+        else if (value === WindowState.Maximized) fb.Window.Maximize();
+        else fb.Window.Restore();
+    };
+    this.enableMinSize = function () { fb.Window.MinSize = true; };
+    this.disableMinSize = function () { fb.Window.MinSize = false; };
+    this.setMinWidth = function (value) { fb.Window.MinWidth = value; };
+    this.setMinHeight = function (value) { fb.Window.MinHeight = value; };
+    this.enableMaxSize = function () { fb.Window.MaxSize = true; };
+    this.disableMaxSize = function () { fb.Window.MaxSize = false; };
+    this.setMaxWidth = function (value) { fb.Window.MaxWidth = value; };
+    this.setMaxHeight = function (value) { fb.Window.MaxHeight = value; };
+    // JSplitter has no Aero or temporary sizing suppression API.
+    this.setAero = function () {};
+    this.setAeroEffect = function () {};
+    this.setFrameStyle = function (style) {
+        // UIHacks NoBorder was 3; JSplitter's documented FrameStyle.NoBorder is 2.
+        fb.Window.FrameStyle = style === 3 ? 2 : style;
+    };
+};
 var g_uihacks = new oUIHacks();
 function Resizing(panelName, resizing_left,resizing_right, y_min, y_max) {
 	this.resizing_left = typeof resizing_left !== 'undefined' ? resizing_left : false;
@@ -1479,54 +1352,6 @@ var IDC_NO = 32648;
 var IDC_APPSTARTING = 32650;
 var IDC_HAND = 32649;
 var IDC_HELP = 32651;
-
-var vb = {};
-vb.Function = function (func) {
-    return function () {
-        return vb.Function.eval.call(this, func, arguments);
-    };
-};
-
-vb.Function.eval = function (func) {
-    var args = Array.prototype.slice.call(arguments[1]);
-    for (var i = 0;
-    i < args.length;
-    i++) {
-        if (typeof args[i] != 'string') {
-            continue;
-        };
-        args[i] = args[i].replace(/"/g, '" + Chr(34) + "') ;
-		args[i] = '"' + args[i].replace(/\n/g, '" + Chr(13) + "') + '"';
-    };
-    var vbe = new ActiveXObject('ScriptControl');
-    vbe.Language = 'VBScript';
-    return vbe.Eval(func + '(' + args.join(', ') + ')');
-};
-
-var MsgBox = vb.Function('MsgBox');
-vb.OKOnly = 0;
-vb.OKCancel = 1;
-vb.AbortRetryIgnore = 2;
-vb.YesNoCancel = 3;
-vb.YesNo = 4;
-vb.RetryCancel = 5;
-vb.Critical = 16;
-vb.Question = 32;
-vb.Exclamation = 48;
-vb.Information = 64;
-vb.DefaultButton1 = 0;
-vb.DefaultButton2 = 256;
-vb.DefaultButton3 = 512;
-vb.DefaultButton4 = 768;
-vb.ApplicationModal = 0;
-vb.SystemModal = 4096;
-vb.OK = 1;
-vb.Cancel = 2;
-vb.Abort = 3;
-vb.Retry = 4;
-vb.Ignore = 5;
-vb.Yes = 6;
-vb.No = 7;
 
 var KMask = {
     none: 0,
@@ -2130,7 +1955,7 @@ function process_string(str){
     return str_;
 }
 function quickSearch(start,search_function){
-	if(layout_state.isEqual(0) && (main_panel_state.isEqual(2) || main_panel_state.isEqual(3))){
+	if(layout_state.isEqual(0) && (main_panel_state.isEqual(2) || main_panel_state.isEqual(3) || main_panel_state.isEqual(4))){
 		main_panel_state.setValue(0);
 		on_notify_data("main_panel_state_force",main_panel_state.value);
 	}

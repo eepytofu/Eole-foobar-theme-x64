@@ -61,7 +61,7 @@ class UserInterface {
 
 		this.pss = {
 			checkOnSize: false,
-			installed: !this.dui && utils.CheckComponent('foo_uie_panel_splitter')
+			installed: !this.dui && utils.CheckComponent('foo_uie_jsplitter')
 		}
 
 		this.sbar = {

@@ -20,6 +20,7 @@ var properties_big = {
     playlists_dark_theme: window.GetProperty("BIG:playlists_dark_theme", false),
     bio_dark_theme: window.GetProperty("BIG:bio_dark_theme", false),
 	bio_stick2darklayout: window.GetProperty("BIG:bio_stick2darklayout",true),
+    lyrics_dark_theme: window.GetProperty("BIG:lyrics_dark_theme", false),
     visualization_dark_theme: window.GetProperty("BIG:visualization_dark_theme", false),
     showwallpaper: window.GetProperty("BIG:showwallpaper", false),
     wallpaperblurred: window.GetProperty("BIG:wallpaperblurred", true),
@@ -76,6 +77,7 @@ var properties_mini = {
     playlists_dark_theme: window.GetProperty("MINI:playlists_dark_theme", false),
     bio_dark_theme: window.GetProperty("MINI:bio_dark_theme", false),
 	bio_stick2darklayout: window.GetProperty("MINI:bio_stick2darklayout",false),
+    lyrics_dark_theme: window.GetProperty("MINI:lyrics_dark_theme", false),
     visualization_dark_theme: window.GetProperty("MINI:visualization_dark_theme", false),
     showwallpaper: window.GetProperty("MINI:showwallpaper", false),
     wallpaperblurred: window.GetProperty("MINI:wallpaperblurred", true),
@@ -5458,6 +5460,8 @@ function setDarkLayout(){
 	else if(main_panel_state.isEqual(2)) {
 		new_darklayout_state = properties.bio_dark_theme;
 		//if(properties.bio_stick2darklayout)	new_darklayout_state = true;
+	} else if(main_panel_state.isEqual(4)) {
+		new_darklayout_state = properties.lyrics_dark_theme;
 	} else if(main_panel_state.isEqual(3)) {
 		new_darklayout_state = properties.visualization_dark_theme;
 	}
@@ -6386,12 +6390,13 @@ function on_metadb_changed(metadbs, fromhook) {
 	}
 	playing_track_new_count = parseInt(playing_track_playcount,10)+1
 	try {
-		if(fb.IsPlaying && metadbs.Count==1 && metadbs[0].RawPath==fb.GetNowPlaying().RawPath && TF.play_count.Eval()==(playing_track_new_count)) {
+		var nowPlaying = fb.GetNowPlaying();
+		if(fb.IsPlaying && nowPlaying && metadbs.Count==1 && metadbs[0].RawPath==nowPlaying.RawPath && TF.play_count.Eval()==(playing_track_new_count)) {
 			playing_track_playcount = playing_track_new_count;
 			return;
 		}
 	} catch(e){
-		console.log("ERROR:on_metadb_changed, WSHsmoothplaylist try/catch");
+		console.log("ERROR:on_metadb_changed, WSHsmoothplaylist try/catch: " + e.message);
 		if(metadbs.Count==1) return;		
 	}
 
@@ -6671,6 +6676,11 @@ function on_notify_data(name, info) {
 			on_colours_changed();
 			window.Repaint();
 		break;
+		case "lyrics_dark_theme":
+			setOneProperty("lyrics_dark_theme",info, true);
+			on_colours_changed();
+			window.Repaint();
+		break;
 		case "visualization_dark_theme":
 			setOneProperty("visualization_dark_theme",info, true);
 			on_colours_changed();
@@ -6762,6 +6772,9 @@ function on_notify_data(name, info) {
 		case "nowplayingbio_state":
 			nowplayingbio_state.value=info;
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 		break;
@@ -6777,6 +6790,11 @@ function on_notify_data(name, info) {
 		break;
 		case "trackinfosbio_state":
 			trackinfosbio_state.value=info;
+			setShowHeaderBar();
+			get_metrics();
+		break;
+		case "trackinfoslyrics_state":
+			trackinfoslyrics_state.value=info;
 			setShowHeaderBar();
 			get_metrics();
 		break;

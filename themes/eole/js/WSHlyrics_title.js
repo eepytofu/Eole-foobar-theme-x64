@@ -7,6 +7,7 @@ var header_height = 135;
 var ww = 0;
 var wh = 0;
 var lyricsText_Width = -1;
+fb.TitleFormat("%esl_expose_api%").Eval(true);
 var esl = new ActiveXObject("ESLyric");
 var eslPanel = esl.GetAll();
 //eslPanel.SetPlayingLyricChangedCallback(lyrics_callback);
@@ -44,8 +45,6 @@ function build_buttons(){
 }
 function positionButtons(){
 	all_btns.x = padding_left + lyricsText_Width;
-	all_btns.y = (lyrics_state.isEqual(5)?padding_top_nobio:padding_top)+10;
-	all_btns.setVisibility(lyrics_state.isEqual(5));
 }
 
 function drawAllButtons(gr) {
@@ -93,7 +92,7 @@ function on_paint(gr) {
 		lyricsText_Width = gr.CalcTextWidth("Lyrics", font_title)+10;
 		positionButtons();
 	}
-	gr.GdiDrawText("Lyrics", font_title, colors.normal_txt, padding_left, (lyrics_state.isEqual(5)?padding_top_nobio:padding_top), ww - padding_left-padding_right, header_height, DT_TOP | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
+	gr.GdiDrawText("Lyrics", font_title, colors.normal_txt, padding_left, 0, ww - padding_left-padding_right, wh, DT_VCENTER | DT_SINGLELINE | DT_LEFT | DT_END_ELLIPSIS | DT_NOPREFIX);
 	drawAllButtons(gr);
 }
 function on_font_changed() {
@@ -117,20 +116,10 @@ function get_colors() {
 	}
 	images.lyrics_off_icon = gdi.Image(theme_img_path + "\\icons\\"+colors.icons_folder+"\\nowplaying_on.png");
 	images.lyrics_off_hover_icon = gdi.Image(theme_img_path + "\\icons\\"+colors.icons_folder+"\\nowplaying_on_hover.png");
+	eslPanel = esl.GetAll();
 	eslPanel.SetTextColor(colors.normal_txt);
 	eslPanel.SetTextHighlightColor(colors.highlight_txt);
 	eslPanel.SetBackgroundColor(colors.normal_bg);
-	lyrics_first_load = utils.Glob(SettingsPath+""+"LYRICSFIRSTLOAD_*");
-	if(lyrics_first_load.length<1){
-	// 	esl.ShowDesktopLyric = false;
-	// 	esl.DesktopLyricAlwaysOnTop = false;
-		eslPanel.SetTextFont("Segoe UI", 12, 0);
-		eslPanel.SetVertMargin(0);
-		eslPanel.SetHorizMargin(13);
-		eslPanel.SetLineSpace(8);
-		eslPanel.SetSentenceSpace(0);			   
-		g_files.CreateTextFile(SettingsPath+"LYRICSFIRSTLOAD_0", true).Close();			
-	}
 };
 function on_mouse_rbtn_up(x, y){
 	var _menu = window.CreatePopupMenu();
@@ -245,19 +234,9 @@ function on_notify_data(name, info) {
 		case "cover_cache_finalized":
 			window.Repaint();
 		break;
-		case "lyrics_state":
-			lyrics_state.value = info;
-			positionButtons();
-		break;
-		case "bio_dark_theme":
+		case "lyrics_dark_theme":
 			properties.darklayout = info;
 			window.SetProperty("_DISPLAY: Dark layout", properties.darklayout);
-			get_colors();
-			window.Repaint();
-            break;
-		case "bio_stick_to_dark_theme":
-			properties.stick2darklayout = info
-			window.SetProperty("_DISPLAY: stick to Dark layout", properties.stick2darklayout);
 			get_colors();
 			window.Repaint();
             break;
@@ -277,3 +256,5 @@ function on_init(){
 	font_title = g_font.nowplaying_title;
 }
 on_init();
+// The native child is created after this header during layout import.
+setTimeout(get_colors, 0);

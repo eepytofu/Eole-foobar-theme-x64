@@ -1,0 +1,2 @@
+# Preserve the preset files' original encodings and line endings.
+milkdrop2/presets/*.milk -text

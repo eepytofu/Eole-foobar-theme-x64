@@ -29,6 +29,7 @@ var properties = {
 	playlists_dark_theme: window.GetProperty("PLAYLISTS dark theme", false),
 	bio_dark_theme: window.GetProperty("BIO dark theme", false),
 	bio_stick2darklayout: window.GetProperty("BIO stick to Dark layout",false),
+	lyrics_dark_theme: window.GetProperty("LYRICS dark theme", false),
 	visualization_dark_theme: window.GetProperty("VISUALIZATION dark theme", false),
 	minimode_dark_theme: window.GetProperty("MINIMODE dark theme", false),
 	show_visualization: window.GetProperty("_PROPERTY show visualization tab", true),
@@ -192,6 +193,7 @@ function build_images() {
 		artist_bio_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\artist_bio_icon.png`),
 		playlist_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\playlist_icon.png`),
 		visualization_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\nowplaying_icon.png`),
+		lyrics_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\lyrics_icon.png`),
 		trackinfos_on: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\trackinfos_on.png`),
 		trackinfos_off: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\trackinfos_off.png`),
 		fullscreen_img: gdi.Image(`${theme_img_path}\\icons\\${colors.icons_folder}\\fullscreen_icon.png`),
@@ -221,6 +223,7 @@ function setDarkLayout(){
 		case (main_panel_state.isEqual(0) && properties.library_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(1) && properties.playlists_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(2) && properties.bio_dark_theme && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(4) && properties.lyrics_dark_theme && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(3) && properties.visualization_dark_theme && layout_state.isEqual(0)):
 		case (properties.minimode_dark_theme && layout_state.isEqual(1)):
 			properties.darklayout = true;
@@ -334,6 +337,13 @@ function Lightswitch(switch_all,new_state){
 		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
         if(!switch_all) window.Repaint();
 	}
+	if((main_panel_state.isEqual(4) && layout_state.isEqual(0)) || switch_all){
+		if(switch_all) properties.lyrics_dark_theme=new_state;
+		else properties.lyrics_dark_theme=!properties.lyrics_dark_theme;
+        window.NotifyOthers("lyrics_dark_theme",properties.lyrics_dark_theme);
+		window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
+		on_notify_data("lyrics_dark_theme",properties.lyrics_dark_theme);
+	}
 	if((main_panel_state.isEqual(3) && layout_state.isEqual(0)) || switch_all){
 		if(switch_all) properties.visualization_dark_theme=new_state;
 		else properties.visualization_dark_theme=!properties.visualization_dark_theme;
@@ -352,11 +362,13 @@ function toggleNowPlayingState(switch_all,new_state, refresh_panel){
 			nowplayinglib_state.toggleValue(refresh_panel);
 			nowplayingplaylist_state.toggleValue(refresh_panel);
 			nowplayingbio_state.toggleValue(refresh_panel);
+			nowplayinglyrics_state.toggleValue(refresh_panel);
 			nowplayingvisu_state.toggleValue(refresh_panel);
 		} else {
 			nowplayinglib_state.setValue(new_state,refresh_panel);
 			nowplayingplaylist_state.setValue(new_state,refresh_panel);
 			nowplayingbio_state.setValue(new_state,refresh_panel);
+			nowplayinglyrics_state.setValue(new_state,refresh_panel);
 			nowplayingvisu_state.setValue(new_state,refresh_panel);
 		}
 	} else {
@@ -377,6 +389,10 @@ function toggleNowPlayingState(switch_all,new_state, refresh_panel){
 				if(new_state!==false) nowplayingvisu_state.setValue(new_state,refresh_panel);
 				else nowplayingvisu_state.toggleValue(refresh_panel);
 			break;
+			case 4:
+				if(new_state!==false) nowplayinglyrics_state.setValue(new_state,refresh_panel);
+				else nowplayinglyrics_state.toggleValue(refresh_panel);
+			break;
 		}
 	}
 	build_buttons();
@@ -394,11 +410,13 @@ function toggleTrackInfosState(switch_all,new_state, refresh_panel){
 			trackinfoslib_state.cycleIncrement(1,refresh_panel);
 			trackinfosplaylist_state.cycleIncrement(1,refresh_panel);
 			trackinfosbio_state.cycleIncrement(1,refresh_panel);
+			trackinfoslyrics_state.cycleIncrement(1,refresh_panel);
 			trackinfosvisu_state.cycleIncrement(1,refresh_panel);
 		} else {
 			trackinfoslib_state.setValue(new_state,refresh_panel);
 			trackinfosplaylist_state.setValue(new_state,refresh_panel);
 			trackinfosbio_state.setValue(new_state,refresh_panel);
+			trackinfoslyrics_state.setValue(new_state,refresh_panel);
 			trackinfosvisu_state.setValue(new_state,refresh_panel);
 		}
 	} else {
@@ -418,6 +436,10 @@ function toggleTrackInfosState(switch_all,new_state, refresh_panel){
 			case 3:
 				if(new_state!==false) trackinfosvisu_state.setValue(new_state,refresh_panel);
 				else trackinfosvisu_state.cycleIncrement(1,refresh_panel);
+			break;
+			case 4:
+				if(new_state!==false) trackinfoslyrics_state.setValue(new_state,refresh_panel);
+				else trackinfoslyrics_state.cycleIncrement(1,refresh_panel);
 			break;
 		}
 	}
@@ -453,6 +475,10 @@ function build_buttons(){
 		buttons.Visualization.H_img = images.visualization_img;
 		buttons.Visualization.N_img = images.visualization_img;
 		buttons.Visualization.D_img = buttons.Visualization.H_img;
+
+		buttons.Lyrics.H_img = images.lyrics_img;
+		buttons.Lyrics.N_img = images.lyrics_img;
+		buttons.Lyrics.D_img = buttons.Lyrics.H_img;
 
 		buttons.Lightswitch.H_img = images.lightswitch_img;
 		buttons.Lightswitch.N_img = images.lightswitch_img;
@@ -532,6 +558,10 @@ function build_buttons(){
 				main_panel_state.setValue(3);
 				get_colors();g_searchbox.adapt_look_to_layout();
 			}, false,false,images.visualization_img,images.visualization_img,3, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
+			Lyrics: new JSButton(btn.left_m+btn.width*4+btn.margin*4, btn.top_m, btn.width, btn.height, "Lyrics", "Lyrics", "", function () {
+				main_panel_state.setValue(4);
+				get_colors();g_searchbox.adapt_look_to_layout();
+			}, false,false,images.lyrics_img,images.lyrics_img,4, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
 			NowPlaying: new JSButton(-38, btn.top_m, btn.width_small_btns, btn.height, "", "nowplaying", "Hide/show right sidebar", function () {
 				toggleNowPlayingState();
 			}, false, false,images.nowplaying_off_icon,images.nowplaying_off_icon,-1, false, false, true,(compact_titlebar.isEqual(2)?g_font.plus1:g_font.normal)),
@@ -545,7 +575,7 @@ function build_buttons(){
 					if(getTrackInfosState()==0) toggleTrackInfosState(false,1,false);
 					toggleNowPlayingState();
 					/*trigger_refresh_PSS = setTimeout(function(){
-						RefreshPSS();
+						RefreshLayout();
 						clearTimeout(trigger_refresh_PSS);
 						trigger_refresh_PSS = false;
 					}, 100);*/
@@ -598,7 +628,7 @@ function build_buttons(){
 		topleft_btns.setPadding([0,7,0,2]);
 
 		main_panel_btns = new JSButtonGroup("top-left", btn.left_m, btn.top_m, 'main_panel_btns', true);
-		main_panel_btns.addButtons([buttons.Library,buttons.Playlists,buttons.Artist_Bio,buttons.Visualization], [0,btn.margin+2,0,0]);
+		main_panel_btns.addButtons([buttons.Library,buttons.Playlists,buttons.Artist_Bio,buttons.Lyrics,buttons.Visualization], [0,btn.margin+2,0,0]);
 		main_panel_btns.setPadding(btn.padding);
 
 		window_btns = new JSButtonGroup("top-right", 0, 0, 'window_btns', false);
@@ -610,14 +640,16 @@ function build_buttons(){
 		compact_btns = new JSButtonGroup("top-left", 0, -1, 'compact_btns', true);
 		compact_btns.addButtons([buttons.Settings,buttons.NowPlaying,buttons.ConfigLayout,buttons.RightSidebar,buttons.Lightswitch,buttons.Fullscreen,buttons.ShowSearch], [0,0,0,0]);
 		compact_btns.addButtons([buttons.Library], [0,0,0,btn.margin+5]);
-		compact_btns.addButtons([buttons.Playlists,buttons.Artist_Bio,buttons.Visualization], [0,0,0,btn.margin]);
+		compact_btns.addButtons([buttons.Playlists,buttons.Artist_Bio,buttons.Lyrics,buttons.Visualization], [0,0,0,btn.margin]);
 	}
 }
 function toggleSearch(new_search_state){
 	g_searchbox.toggleVisibility();
 	if(!g_searchbox.hide) g_searchbox.inputbox.activate(0,0);
 }
+var layout_transition = false;
 function toggleLayoutMode(new_layout_state, main_window_state){
+	layout_transition = true;
 	new_layout_state = typeof new_layout_state !== 'undefined' ? new_layout_state : 1-layout_state.value;
 	main_window_state = typeof main_window_state !== 'undefined' ? main_window_state : 0;
 
@@ -625,6 +657,10 @@ function toggleLayoutMode(new_layout_state, main_window_state){
 		if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
 			properties.fullMode_savedwidth=window.Width;
 			window.SetProperty("Full mode saved width", properties.fullMode_savedwidth);
+			// Hidden JSplitter children do not report the playlist manager's current height.
+			var controls_height = mini_controlbar.isActive() ? (showtrackinfo_big.isActive() ? properties.compactcontrolsHeight : properties.compactNoTrackcontrolsHeight) : properties.fullcontrolsHeight;
+			properties.fullMode_pmanagerheight = Math.max(0, fb.Window.Height - window.Height - controls_height);
+			window.SetProperty("Full mode pmanager saved height", properties.fullMode_pmanagerheight);
 		} else {
 			g_uihacks.setFullscreenState(false);
 			g_uihacks.setMainWindowState(main_window_state);
@@ -644,6 +680,7 @@ function toggleLayoutMode(new_layout_state, main_window_state){
 			clearTimeout(maxsize_disabling);
 			maxsize_disabling = false;
 			g_uihacks.disableMaxSize();
+			layout_transition = false;
 		}, 100);
 		adapt_buttons_to_layout();
 	} else {
@@ -658,7 +695,7 @@ function toggleLayoutMode(new_layout_state, main_window_state){
 		g_uihacks.enableMinSize();
 		g_uihacks.setMinWidth(Math.max(properties.fullMode_savedwidth,globalProperties.fullMode_minwidth));
 		try{
-			g_uihacks.setMinHeight(Math.max(properties.fullMode_pmanagerheight+(mini_controlbar.isActive()?(showtrackinfo_big.isActive()?properties.compactcontrolsHeight:properties.compactNoTrackcontrolsHeight):properties.fullcontrolsHeight)+(compact_titlebar.isActive()?(compact_titlebar.isEqual(2)?properties.compact_titlebar_big_height:properties.compact_titlebar_height):properties.full_titlebar_height),globalProperties.fullMode_minheight) + 1);
+			g_uihacks.setMinHeight(Math.max(properties.fullMode_pmanagerheight+(mini_controlbar.isActive()?(showtrackinfo_big.isActive()?properties.compactcontrolsHeight:properties.compactNoTrackcontrolsHeight):properties.fullcontrolsHeight)+(compact_titlebar.isActive()?(compact_titlebar.isEqual(2)?properties.compact_titlebar_big_height:properties.compact_titlebar_height):properties.full_titlebar_height),globalProperties.fullMode_minheight));
 		} catch (e) {
 			g_uihacks.setMinHeight(window.Height);
 		}
@@ -667,6 +704,7 @@ function toggleLayoutMode(new_layout_state, main_window_state){
 			minsize_disabling = false;
 			g_uihacks.setMinWidth(650);
 			g_uihacks.setMinHeight(300);
+			layout_transition = false;
 		}, 100);
 		adapt_buttons_to_layout();
 		set_main_btns_visibility();
@@ -839,6 +877,7 @@ function set_main_btns_visibility(){
 		buttons.Playlists.setVisibility(false);
 		buttons.Artist_Bio.setVisibility(false);
 		buttons.Library.setVisibility(false);
+		buttons.Lyrics.setVisibility(false);
 		buttons.Visualization.setVisibility(false);
 		return;
 	}
@@ -847,9 +886,11 @@ function set_main_btns_visibility(){
 	else var searchbox_width = 0;
 
 	if(properties.show_visualization){
-		if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*4+btn.padding*3) buttons.Visualization.setVisibility(false);
+		if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*5+btn.padding*4) buttons.Visualization.setVisibility(false);
 		else buttons.Visualization.setVisibility(true);
 	}
+	if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*4+btn.padding*3) buttons.Lyrics.setVisibility(false);
+	else buttons.Lyrics.setVisibility(true);
 	if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*3+btn.padding*2) buttons.Artist_Bio.setVisibility(false);
 	else buttons.Artist_Bio.setVisibility(true);
 	if(ww-cSearchBox.marginRight-searchbox_width<btn.left_m+btn.width*2+btn.padding*1) buttons.Playlists.setVisibility(false);
@@ -863,7 +904,7 @@ function on_size(w, h) {
 	var fullscreen =  g_uihacks.getFullscreenState();
 	var mainWindowState =  g_uihacks.getMainWindowState();
 	if(layout_state.isEqual(0)){
-		if(!fullscreen && mainWindowState==0) properties.fullMode_savedwidth=ww;
+		if(!layout_transition && !fullscreen && mainWindowState==0) properties.fullMode_savedwidth=ww;
 		set_main_btns_visibility();
 	} else {
 		if(mainWindowState==2){
@@ -914,6 +955,7 @@ function on_paint(gr) {
 		case (main_panel_state.isEqual(0) && ((properties.library_dark_theme && !properties.darklayout) || (!properties.library_dark_theme && properties.darklayout)) && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(1) && ((properties.playlists_dark_theme && !properties.darklayout) || (!properties.playlists_dark_theme && properties.darklayout)) && layout_state.isEqual(0)):
 		case (main_panel_state.isEqual(2) && ((properties.bio_dark_theme && !properties.darklayout) || (!properties.bio_dark_theme && (properties.darklayout || (properties.bio_stick2darklayout && !nowplayingbio_state.isActive())))) && layout_state.isEqual(0)):
+		case (main_panel_state.isEqual(4) && layout_state.isEqual(0) && !nowplayinglyrics_state.isActive()):
 		case (main_panel_state.isEqual(3) && layout_state.isEqual(0) && !nowplayingvisu_state.isActive()):
 		case (((properties.minimode_dark_theme && !properties.darklayout) || (!properties.minimode_dark_theme && properties.darklayout)) && layout_state.isEqual(1)):
 		break;
@@ -1032,8 +1074,11 @@ function on_mouse_rbtn_up(x, y){
 			_menu.AppendMenuItem(MF_STRING, 1, "Library");
 			_menu.AppendMenuItem(MF_STRING, 2, "Playlists");
 			_menu.AppendMenuItem(MF_STRING, 3, "Now playing");
+			_menu.AppendMenuItem(MF_STRING, 8, "Lyrics");
 			if(properties.show_visualization) _menu.AppendMenuItem(MF_STRING, 4, "Visualization");
-			_menu.CheckMenuRadioItem(1, 4, (parseInt(main_panel_state.value)+1));
+			// Lyrics is view 4 but sits before Visualization, so mark the one item instead of a range.
+			var checked_view = main_panel_state.isEqual(4) ? 8 : parseInt(main_panel_state.value)+1;
+			_menu.CheckMenuRadioItem(checked_view, checked_view, checked_view);
 			_menu.AppendMenuSeparator();
 			_menu.AppendMenuItem(MF_STRING, 6, "Compact player");
 			if(g_uihacks.getFullscreenState())
@@ -1067,6 +1112,10 @@ function on_mouse_rbtn_up(x, y){
                 break;
             case (idx == 4):
 				main_panel_state.setValue(3);
+				get_colors();g_searchbox.adapt_look_to_layout();
+                break;
+            case (idx == 8):
+				main_panel_state.setValue(4);
 				get_colors();g_searchbox.adapt_look_to_layout();
                 break;
             case (idx == 5):
@@ -1123,9 +1172,6 @@ function draw_settings_menu(x,y){
 
 		_menu.AppendMenuItem(MF_STRING, 1900, "Resume panel state on startup");
 		_menu.CheckMenuItem(1900, properties.Remember_previous_state)
-
-		_menu.AppendMenuItem(MF_STRING, 1901, "Hide visualization panel");
-		_menu.CheckMenuItem(1901, !properties.show_visualization)
 
 		_menu.AppendMenuSeparator();
 		_menu_button.AppendMenuItem(MF_STRING, 1806, "Right sidebar visibility");
@@ -1254,14 +1300,6 @@ function draw_settings_menu(x,y){
 				window.SetProperty("Resume panel state on startup, except on visualization tab", properties.Remember_previous_state);
 				window.Repaint();
 				break;
-			case (idx == 1901):
-				properties.show_visualization = !properties.show_visualization;
-				window.SetProperty("_PROPERTY show visualization tab", properties.show_visualization);
-				if(main_panel_state.isEqual(3)) main_panel_state.setValue(0);
-				get_colors();
-				adapt_buttons_to_layout();
-				window.Repaint();
-				break;
 			case (idx == 2000):
 				properties.showwallpaper = !properties.showwallpaper;
 				window.SetProperty("_DISPLAY: Show Wallpaper", properties.showwallpaper);
@@ -1322,6 +1360,7 @@ function draw_layout_menu(x,y){
 	library_menu = window.CreatePopupMenu();
 	playlists_menu = window.CreatePopupMenu();
 	bio_menu = window.CreatePopupMenu();
+	lyrics_menu = window.CreatePopupMenu();
 	visu_menu = window.CreatePopupMenu();
 	minimode_menu = window.CreatePopupMenu();
 	right_menu_trackdetails = window.CreatePopupMenu();
@@ -1415,25 +1454,18 @@ function draw_layout_menu(x,y){
 		basemenu.AppendMenuItem(MF_GRAYED, 0, "Now playing Layout");
 		basemenu.AppendMenuSeparator();				
 		nowplaying.AppendTo(basemenu,MF_STRING, "Right playlist");
-
-		if(!lyrics_state.isActive()){
-			basemenu.AppendMenuItem(MF_STRING, 4999, "Show lyrics");
-		} else {
-			var LyricsMenu = window.CreatePopupMenu();
-			LyricsMenu.AppendMenuItem(MF_STRING, 5000, "Hide");
-			LyricsMenu.AppendMenuSeparator();
-			LyricsMenu.AppendMenuItem((!lyrics_state.isMaximumValue())?MF_STRING:MF_GRAYED, 4999, "Increase width");
-			LyricsMenu.AppendMenuItem(MF_STRING, 4998, "Decrease width");
-			LyricsMenu.AppendTo(basemenu, MF_STRING, "Lyrics panel");
-			LyricsMenu.AppendMenuSeparator();
-			LyricsMenu.AppendMenuItem(MF_STRING, 6000, "Show toggle buttons");
-			LyricsMenu.AppendMenuItem(MF_STRING, 6001, "Hide toggle buttons");			
-		}
 		basemenu.AppendMenuSeparator();
 		basemenu.AppendMenuItem(MF_STRING, 4002, "Dark theme");
 		basemenu.CheckMenuItem(4002, properties.bio_dark_theme);
 		wallpaper_visibility.AppendTo(basemenu,MF_STRING, "Wallpapers visibility");
 		wallpaper_blur.AppendTo(basemenu,MF_STRING, "Wallpapers blur");
+	} else if(main_panel_state.isEqual(4)){
+		basemenu.AppendMenuItem(MF_GRAYED, 0, "Lyrics Layout");
+		basemenu.AppendMenuSeparator();				
+		nowplaying.AppendTo(basemenu,MF_STRING, "Right playlist");
+		basemenu.AppendMenuSeparator();
+		basemenu.AppendMenuItem(MF_STRING, 4004, "Dark theme");
+		basemenu.CheckMenuItem(4004, properties.lyrics_dark_theme);
 	} else if(main_panel_state.isEqual(3)){
 		basemenu.AppendMenuItem(MF_GRAYED, 0, "Visualization Layout");
 		basemenu.AppendMenuSeparator();				
@@ -1500,6 +1532,12 @@ function draw_layout_menu(x,y){
 		window.SetProperty("BIO dark theme", properties.bio_dark_theme);
 		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
         window.Repaint();
+        break;
+   case (idx == 4004):
+		properties.lyrics_dark_theme=!properties.lyrics_dark_theme;
+        window.NotifyOthers("lyrics_dark_theme",properties.lyrics_dark_theme);
+		window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
+		on_notify_data("lyrics_dark_theme",properties.lyrics_dark_theme);
         break;
    case (idx == 4003):
 		properties.visualization_dark_theme=!properties.visualization_dark_theme;
@@ -1625,21 +1663,6 @@ function draw_layout_menu(x,y){
 		if(properties.savedFilterState>=0) filters_panel_state.setValue(properties.savedFilterState);
 		else filters_panel_state.setValue(1);
         break;
-    case (idx == 4998):
-		lyrics_state.decrement(1);
-        break;
-    case (idx == 4999):
-		lyrics_state.increment(1);
-        break;
-    case (idx == 6000):
-		window.NotifyOthers("show_lyrics_btns",true);
-        break;		
-    case (idx == 6001):
-		window.NotifyOthers("show_lyrics_btns",false);
-        break;			
-    case (idx == 5000):
-		lyrics_state.setValue(0);
-        break;
     }
 
     basemenu = undefined;
@@ -1695,6 +1718,7 @@ function draw_main_menu(x,y){
 	library_menu = window.CreatePopupMenu();
 	playlists_menu = window.CreatePopupMenu();
 	bio_menu = window.CreatePopupMenu();
+	lyrics_menu = window.CreatePopupMenu();
 	visu_menu = window.CreatePopupMenu();
 	minimode_menu = window.CreatePopupMenu();
 	appearance_menu = window.CreatePopupMenu();
@@ -1776,22 +1800,17 @@ function draw_main_menu(x,y){
 
 		nowplaying.AppendTo(bio_menu,MF_STRING, "Right playlist");
 
-		if(!lyrics_state.isActive()){
-			bio_menu.AppendMenuItem(MF_STRING, 4999, "Show lyrics");
-		} else {
-			var LyricsMenu = window.CreatePopupMenu();
-			LyricsMenu.AppendMenuItem(MF_STRING, 5000, "Hide");
-			LyricsMenu.AppendMenuSeparator();
-			LyricsMenu.AppendMenuItem((!lyrics_state.isMaximumValue())?MF_STRING:MF_GRAYED, 4999, "Increase width");
-			LyricsMenu.AppendMenuItem(MF_STRING, 4998, "Decrease width");
-			LyricsMenu.AppendTo(bio_menu, MF_STRING, "Lyrics panel");
-		}
-
 		bio_menu.AppendMenuSeparator();
 		bio_menu.AppendMenuItem(MF_STRING, 4002, "Dark theme");
 		bio_menu.CheckMenuItem(4002, properties.bio_dark_theme);
 		wallpaper_visibility.AppendTo(bio_menu,MF_STRING, "Wallpapers visibility");
 		wallpaper_blur.AppendTo(bio_menu,MF_STRING, "Wallpapers blur");
+	} else if(main_panel_state.isEqual(4)){
+		lyrics_menu.AppendTo(skin_settings_menu,MF_STRING, "Panel layout");
+		nowplaying.AppendTo(lyrics_menu,MF_STRING, "Right playlist");
+		lyrics_menu.AppendMenuSeparator();
+		lyrics_menu.AppendMenuItem(MF_STRING, 4004, "Dark theme");
+		lyrics_menu.CheckMenuItem(4004, properties.lyrics_dark_theme);
 	} else if(main_panel_state.isEqual(3)){
 		visu_menu.AppendTo(skin_settings_menu,MF_STRING, "Panel layout");
 		nowplaying.AppendTo(visu_menu,MF_STRING, "Right playlist");
@@ -2045,6 +2064,12 @@ function draw_main_menu(x,y){
 		on_notify_data("bio_dark_theme",properties.bio_dark_theme);
         window.Repaint();
         break;
+   case (idx == 4004):
+		properties.lyrics_dark_theme=!properties.lyrics_dark_theme;
+        window.NotifyOthers("lyrics_dark_theme",properties.lyrics_dark_theme);
+		window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
+		on_notify_data("lyrics_dark_theme",properties.lyrics_dark_theme);
+        break;
    case (idx == 4003):
 		properties.visualization_dark_theme=!properties.visualization_dark_theme;
         window.NotifyOthers("visualization_dark_theme",properties.visualization_dark_theme);
@@ -2242,15 +2267,6 @@ function draw_main_menu(x,y){
 		if(properties.savedFilterState>=0) filters_panel_state.setValue(properties.savedFilterState);
 		else filters_panel_state.setValue(1);
         break;
-    case (idx == 4998):
-		lyrics_state.decrement(1);
-        break;
-    case (idx == 4999):
-		lyrics_state.increment(1);
-        break;
-    case (idx == 5000):
-		lyrics_state.setValue(0);
-        break;
     case (idx >= 5001 && idx < 5010):
 		Lightswitch(true,false);
 		globalProperties.colorsMainPanel = idx-5001;
@@ -2401,13 +2417,15 @@ function on_notify_data(name, info) {
 			build_buttons();
 			window.Repaint();
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+			build_buttons();
+			window.Repaint();
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 			build_buttons();
 			window.Repaint();
-		break;
-		case "lyrics_state":
-			lyrics_state.value = info;
 		break;
 		case "wallpaperVisibility":
 			toggleWallpaper(info);
@@ -2460,6 +2478,14 @@ function on_notify_data(name, info) {
 			g_searchbox.adapt_look_to_layout();
 			window.Repaint();
 		break;	
+		case "lyrics_dark_theme":
+			properties.lyrics_dark_theme=info;
+			window.SetProperty("LYRICS dark theme", properties.lyrics_dark_theme);
+			darklyrics_state.setValue((properties.lyrics_dark_theme)?1:0);
+			get_colors();
+			g_searchbox.adapt_look_to_layout();
+			window.Repaint();
+		break;
 		case "visualization_dark_theme":
 			properties.visualization_dark_theme=info;
 			window.SetProperty("VISUALIZATION dark theme", properties.visualization_dark_theme);
@@ -2469,7 +2495,7 @@ function on_notify_data(name, info) {
 			window.Repaint();
 		break;
 		case "layout_state":
-			layout_state = info;
+			layout_state.value = info;
 			g_searchbox.adapt_look_to_layout();
 			get_colors()
 			window.Repaint();
@@ -2504,7 +2530,7 @@ function on_notify_data(name, info) {
 			window.SetProperty("ARTIST IMG Load all at startup", globalProperties.load_artist_img_at_startup);
 		break;
 		case "pmanager_height":
-			if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+			if(!layout_transition && !g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
 				properties.fullMode_pmanagerheight=info;
 				window.SetProperty("Full mode pmanager saved height", properties.fullMode_pmanagerheight);
 			}
@@ -2513,7 +2539,7 @@ function on_notify_data(name, info) {
 			setScheduler(info,true);
 		break;
 		case "playlist_height":
-			if(!g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
+			if(!layout_transition && !g_uihacks.getFullscreenState() && g_uihacks.getMainWindowState()==0){
 				properties.miniMode_playlistheight=info;
 				window.SetProperty("Mini mode playlist saved height", properties.miniMode_playlistheight);
 			}
@@ -2655,6 +2681,7 @@ oSearch = function() {
 				case (main_panel_state.isEqual(0) && properties.library_dark_theme):
 				case (main_panel_state.isEqual(1) && properties.playlists_dark_theme):
 				case (main_panel_state.isEqual(2) && properties.bio_dark_theme):
+				case (main_panel_state.isEqual(4) && properties.lyrics_dark_theme):
 				case (main_panel_state.isEqual(3) && properties.visualization_dark_theme):
 					for (var c in cSearchBoxMainDark)
 						if(cSearchBoxMainDark.hasOwnProperty(c))
@@ -2978,6 +3005,7 @@ function toggleBlurWallpaper(wallpaper_blur_state){
 	window.Repaint();
 }
 function on_init(){
+	if(!properties.show_visualization && main_panel_state.isEqual(3)) main_panel_state.setValue(0);
 	if(properties.Remember_previous_state && main_panel_state.isEqual(3)) {
 		main_panel_state.setValue(0);
 	} else if(!properties.Remember_previous_state){
@@ -2999,6 +3027,13 @@ function on_init(){
 	g_genre_cache = new oGenreCache();
 	g_genre_cache.build_from_library();
 	g_uihacks.setFrameStyle(3);
+	window.SetTimeout(function () {
+		// Columns UI can retain framed client dimensions after an in-place layout import.
+		if (fb.Window.IsMinimized || fb.Window.IsMaximized || fb.Window.Fullscreen || window.Width === fb.Window.Width) return;
+		var x = fb.Window.X, y = fb.Window.Y, width = fb.Window.Width, height = fb.Window.Height;
+		fb.Window.Move(x, y, width + 1, height);
+		fb.Window.Move(x, y, width, height);
+	}, 0);
 	g_uihacks.setAeroEffect(2);
 	g_uihacks.setAero(0,0,1,0);
 
@@ -3010,10 +3045,10 @@ function on_init(){
 			clearTimeout(welcome_msg_timer);
 			welcome_msg_timer=false;
 		}, 200);
-		RefreshPSS();
+		RefreshLayout();
 	} else if(versionCompare(theme_version.getValue(),globalProperties.lastest_breaking_version)<0) {
 		var welcome_msg_timer = setTimeout(function(){
-			NoticeBox(" ","<div class='titleBig'>Import fcl file, Eole v"+(globalProperties.lastest_breaking_version)+" and after</div><div class='separator'></div><br/>Looks like your column UI configuration file is out of date, you need to import the new configuration file. You may loose some of the customizations you did to this theme, but you'll be able to set them back quickly.<br/><br/>On the preferences page (Foobar > File > Preferences), go to<br/>Display > column UI > Main tab > Import configuration...<br/><br/>And then import this file: [YOUR_FOOBAR_DIRECTORY]/themes/eole/columnsUI_eole.fcl", "Got it, open the preferences","Not now",'fb.RunMainMenuCommand("File/Preferences")');
+			NoticeBox(" ","<div class='titleBig'>Import fcl file, Eole v"+(globalProperties.lastest_breaking_version)+" and after</div><div class='separator'></div><br/>Looks like your column UI configuration file is out of date, you need to import the new configuration file. You may loose some of the customizations you did to this theme, but you'll be able to set them back quickly.<br/><br/>On the preferences page (Foobar > File > Preferences), go to<br/>Display > column UI > Main tab > Import configuration...<br/><br/>And then import this file: [YOUR_FOOBAR_DIRECTORY]/themes/eole/columnsUI_eole_x64.fcl", "Got it, open the preferences","Not now",'fb.RunMainMenuCommand("File/Preferences")');
 			clearTimeout(welcome_msg_timer);
 			welcome_msg_timer=false;
 		}, 200);

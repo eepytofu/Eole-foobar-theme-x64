@@ -2953,20 +2953,25 @@ function on_playlist_switch() {
 }
 
 function on_playlist_items_added(playlist_idx) {
+	var row = brw.rows[brw.getRowIdFromIdx(playlist_idx)];
+	// Hidden panels rebuild their rows when shown, after playlist creation.
+	if (!row) return;
 	try{
-		brw.rows[brw.getRowIdFromIdx(playlist_idx)].update_count();
+		row.update_count();
 		if(window.IsVisible) brw.repaint();
 	} catch(e){
-		console.log('on_playlist_items_added failed');
+		console.log('on_playlist_items_added failed: ' + e.message);
 	}
 }
 
 function on_playlist_items_removed(playlist_idx, new_count) {
+	var row = brw.rows[brw.getRowIdFromIdx(playlist_idx)];
+	if (!row) return;
 	try{
-		brw.rows[brw.getRowIdFromIdx(playlist_idx)].item_count = new_count;
+		row.item_count = new_count;
 		if(window.IsVisible) brw.repaint();
 	} catch(e){
-		console.log('on_playlist_items_removed failed');
+		console.log('on_playlist_items_removed failed: ' + e.message);
 	}
 }
 

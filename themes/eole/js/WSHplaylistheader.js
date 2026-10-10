@@ -1046,6 +1046,9 @@ function on_notify_data(name, info) {
 		case "nowplayingbio_state":
 			nowplayingbio_state.value=info;
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 		break;

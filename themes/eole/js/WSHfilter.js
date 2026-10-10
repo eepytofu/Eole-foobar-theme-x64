@@ -5897,6 +5897,9 @@ function on_notify_data(name, info) {
 		case "nowplayingbio_state":
 			nowplayingbio_state.value=info;
 		break;
+		case "nowplayinglyrics_state":
+			nowplayinglyrics_state.value=info;
+		break;
 		case "nowplayingvisu_state":
 			nowplayingvisu_state.value=info;
 		break;
@@ -5908,6 +5911,9 @@ function on_notify_data(name, info) {
 		break;
 		case "trackinfosbio_state":
 			trackinfosbio_state.value=info;
+		break;
+		case "trackinfoslyrics_state":
+			trackinfoslyrics_state.value=info;
 		break;
 		case "trackinfosvisu_state":
 			trackinfosvisu_state.value=info;
